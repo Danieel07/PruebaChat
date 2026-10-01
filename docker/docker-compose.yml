@@ -1,33 +1,59 @@
-version: '3.8'
 services:
-  model:
-    image: "${MODEL_IMAGE}"
-    container_name: pruebachat_model
-    environment:
-      - MODEL_API_KEY=${MODEL_API_KEY}
+  # La imagen oficial ya trae ENTRYPOINT ["/bin/ollama"] y CMD ["serve"].
+  # No hay que sobreescribir el entrypoint: hacerlo era lo que impedia
+  # que el modelo se descargara.
+  ollama:
+    image: "ollama/ollama:latest"
+    container_name: pruebachat_ollama
     ports:
-      - "5005:5005"
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
+      # Ollama no expone /health. "ollama list" contra el socket local es la
+      # comprobacion real de que el servidor acepta peticiones.
+      test: ["CMD", "ollama", "list"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 12
+      start_period: 20s
+
+  # Servicio efimero: descarga el modelo una sola vez y termina.
+  # Saca los ~4.7 GB del arranque de Spring, que es lo que dejaba el
+  # puerto 8081 publicado pero sin nadie escuchando (ERR_CONNECTION_RESET).
+  ollama-pull:
+    image: "ollama/ollama:latest"
+    container_name: pruebachat_ollama_pull
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    command: ["pull", "llama3"]
+    restart: "no"
+    depends_on:
+      ollama:
+        condition: service_healthy
 
   backend:
-    build: ./backend
+    build: ../backend
     container_name: pruebachat_backend
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
-      - MODEL_HOST=model:5005
-      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_AI_OLLAMA_BASE_URL=http://ollama:11434
     depends_on:
-      - model
+      ollama:
+        condition: service_healthy
+      ollama-pull:
+        condition: service_completed_successfully
 
   frontend:
-    build: ./frontend
+    build: ../frontend
     container_name: pruebachat_frontend
     ports:
       - "4200:4200"
     depends_on:
       - backend
+
+volumes:
+  ollama_data:
+    driver: local

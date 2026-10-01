@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-URL="http://localhost:8080/api/v1/chat"
+URL="http://localhost:8081/api/v1/chat"
 PAYLOAD='{"question":"Hello, demo","sessionId":"demo"}'
 
 echo "Running smoke test against $URL"

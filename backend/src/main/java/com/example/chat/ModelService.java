@@ -1,9 +1,8 @@
 package com.example.chat;
 
+import com.example.chat.dto.ChatResponse;
+
 public interface ModelService {
-    /**
-     * Generate a response from the chosen model.
-     * Implementations should handle communication with Spring AI / model client.
-     */
-    String generateResponse(String question, String sessionId);
+
+    ChatResponse generateResponse(String sessionId, String question);
 }

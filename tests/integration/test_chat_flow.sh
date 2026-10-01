@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Simple integration test: POST to backend and expect non-empty answer
-URL="http://localhost:8080/api/v1/chat"
+URL="http://localhost:8081/api/v1/chat"
 PAYLOAD='{"question":"Integration test","sessionId":"it"}'
 
 RESPONSE=$(curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "$URL" || true)

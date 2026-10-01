@@ -23,7 +23,7 @@ MODEL_API_KEY=
 Run a smoke test to validate end-to-end flow (repeatable):
 
 ```bash
-curl -X POST http://localhost:8080/api/v1/chat \
+curl -X POST http://localhost:8081/api/v1/chat \
   -H "Content-Type: application/json" \
   -d '{"question":"Hello, demo","sessionId":"demo"}'
 ```

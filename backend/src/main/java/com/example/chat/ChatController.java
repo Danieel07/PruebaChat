@@ -2,17 +2,13 @@ package com.example.chat;
 
 import com.example.chat.dto.ChatRequest;
 import com.example.chat.dto.ChatResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/chat")
+@CrossOrigin(origins = "*")
 public class ChatController {
 
     private final ModelService modelService;
@@ -21,12 +17,20 @@ public class ChatController {
         this.modelService = modelService;
     }
 
-    @PostMapping("/chat")
-    public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest req) {
-        long start = Instant.now().toEpochMilli();
-        String answer = modelService.generateResponse(req.getQuestion(), req.getSessionId());
-        long elapsed = Instant.now().toEpochMilli() - start;
-        ChatResponse resp = new ChatResponse(UUID.randomUUID().toString(), answer, elapsed, "ok");
-        return ResponseEntity.ok(resp);
+    @PostMapping
+    public ChatResponse chat(@RequestBody ChatRequest request) {
+        try {
+            // El servicio ahora nos devuelve el ChatResponse completo con la metadata
+            return modelService.generateResponse(request.getSessionId(), request.getQuestion());
+        } catch (Exception e) {
+            // Si hay error crítico, armamos un ChatResponse de error con valores en 0
+            return new ChatResponse(
+                    request.getSessionId() != null ? request.getSessionId() : UUID.randomUUID().toString(),
+                    "Error interno: " + e.getMessage(),
+                    0,
+                    "error",
+                    0, 0, 0, "error", "error", 0.0
+            );
+        }
     }
 }

@@ -26,7 +26,6 @@ public class LogRedactionFilter implements Filter {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest req = (HttpServletRequest) request;
             log.debug("Request: method={} path={}", req.getMethod(), req.getRequestURI());
-            // Note: real implementation should sanitize request/response bodies before logging
         }
         chain.doFilter(request, response);
     }

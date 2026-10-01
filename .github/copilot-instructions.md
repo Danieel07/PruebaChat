@@ -2,6 +2,6 @@
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan:
 
-Plan: specs/001-spring-ai-demo/plan.md
+Plan: specs/002-migrate-to-ollama/plan.md
 
 <!-- SPECKIT END -->
