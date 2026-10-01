@@ -2,6 +2,9 @@ package com.example.chat;
 
 import com.example.chat.dto.ChatRequest;
 import com.example.chat.dto.ChatResponse;
+import com.example.chat.dto.ClassifyRequest;
+import com.example.chat.dto.ClassifyResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -18,12 +21,10 @@ public class ChatController {
     }
 
     @PostMapping
-    public ChatResponse chat(@RequestBody ChatRequest request) {
+    public ChatResponse chat(@Valid @RequestBody ChatRequest request) {
         try {
-            // El servicio ahora nos devuelve el ChatResponse completo con la metadata
-            return modelService.generateResponse(request.getSessionId(), request.getQuestion());
+            return modelService.generateResponse(request);
         } catch (Exception e) {
-            // Si hay error crítico, armamos un ChatResponse de error con valores en 0
             return new ChatResponse(
                     request.getSessionId() != null ? request.getSessionId() : UUID.randomUUID().toString(),
                     "Error interno: " + e.getMessage(),
@@ -32,5 +33,10 @@ public class ChatController {
                     0, 0, 0, "error", "error", 0.0
             );
         }
+    }
+
+    @PostMapping("/classify")
+    public ClassifyResponse classify(@Valid @RequestBody ClassifyRequest request) {
+        return modelService.classify(request);
     }
 }

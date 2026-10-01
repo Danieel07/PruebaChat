@@ -27,6 +27,19 @@ public class ChatRequest {
 
     private Integer seed;
 
+    // Punto 3: Parámetros de plantilla de prompt
+    private String templateId; // ej: "conciso", "tutor", "extractor", "default"
+    private String rol;        // ej: "tutor", "experto", "asistente"
+    private String dominio;    // ej: "ingenieria de software", "general"
+    private String idioma;     // ej: "espanol", "ingles"
+
+    public ChatRequest() {}
+
+    public ChatRequest(String sessionId, String question) {
+        this.sessionId = sessionId;
+        this.question = question;
+    }
+
     // Getters y Setters
     public String getSessionId() { return sessionId; }
     public void setSessionId(String sessionId) { this.sessionId = sessionId; }
@@ -48,4 +61,16 @@ public class ChatRequest {
 
     public Integer getSeed() { return seed; }
     public void setSeed(Integer seed) { this.seed = seed; }
+
+    public String getTemplateId() { return templateId; }
+    public void setTemplateId(String templateId) { this.templateId = templateId; }
+
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
+
+    public String getDominio() { return dominio; }
+    public void setDominio(String dominio) { this.dominio = dominio; }
+
+    public String getIdioma() { return idioma; }
+    public void setIdioma(String idioma) { this.idioma = idioma; }
 }
