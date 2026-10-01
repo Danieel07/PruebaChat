@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'com.example'
+version '0.1.0'
+
+sourceCompatibility = '25'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.5.0'
+    // Spring AI dependency to be added during implementation
+}
+
+application {
+    mainClass = 'com.example.chat.Application'
+}

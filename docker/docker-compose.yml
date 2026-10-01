@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  model:
+    image: "${MODEL_IMAGE}"
+    container_name: pruebachat_model
+    environment:
+      - MODEL_API_KEY=${MODEL_API_KEY}
+    ports:
+      - "5005:5005"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: pruebachat_backend
+    ports:
+      - "8080:8080"
+    environment:
+      - MODEL_HOST=model:5005
+      - SPRING_PROFILES_ACTIVE=local
+    depends_on:
+      - model
+
+  frontend:
+    build: ./frontend
+    container_name: pruebachat_frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
